@@ -1,1 +1,2 @@
 This project is more of an expireiment, do not use without explicit permission from NGGMRS. I'm not sure if thier api is open to everyone, however it is easliy publically accessable so i am using it in moderation. I started statically gennerating a kml file to import into ATAK then I realized that it wouldnt have live updates and I would need a server to periodically update the file and serve it to ATAK.
+I've chosen to use replit mainly for testing I do not wish to fool with self hosting it while I am on holiday.
