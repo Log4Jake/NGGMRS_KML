@@ -42,13 +42,13 @@ def icon_href(keyed, last_report):
 
     if keyed == "1":
         # yellow – transmitting
-        return "https://raw.githubusercontent.com/atlassian/aui/master/icons/flag-yellow.png"
+        return "https://maps.google.com/mapfiles/kml/paddle/X.png"
     elif age > timedelta(minutes=5):
         # red – stale data
-        return "https://raw.githubusercontent.com/atlassian/aui/master/icons/flag-red.png"
+        return "https://maps.google.com/mapfiles/kml/paddle/grn-blank.png"
     else:
         # green – normal
-        return "https://raw.githubusercontent.com/atlassian/aui/master/icons/flag-green.png"
+        return "https://maps.google.com/mapfiles/kml/paddle/ylw-blank.png"
 
 # --------------------------------------------------------------
 # Build the KML document
