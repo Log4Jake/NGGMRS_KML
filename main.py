@@ -13,9 +13,10 @@ from flask import Flask, send_file, abort
 # --------------------------------------------------------------
 API_URL = "https://stats.nggmrs.net/api/nodes"
 OUTPUT_KML = "nggmrs_repeaters.kml"
-UPDATE_INTERVAL = 5 * 60          # 5 minutes (seconds)
+UPDATE_INTERVAL = 1 * 60  # 5 minutes (seconds)
 
-app = Flask(__name__)              # Flask app for Replit
+app = Flask(__name__)  # Flask app for Replit
+
 
 # --------------------------------------------------------------
 # Helper: fetch JSON from the API
@@ -25,12 +26,14 @@ def fetch_nodes():
         data = resp.read().decode()
         return json.loads(data)
 
+
 # --------------------------------------------------------------
 # Helper: format a timestamp (Unix seconds) as a human‑readable string
 # --------------------------------------------------------------
 def fmt_time(ts):
     dt = datetime.fromtimestamp(ts, tz=timezone.utc)
     return dt.strftime("%Y-%m-%d %H:%M:%S UTC")
+
 
 # --------------------------------------------------------------
 # Helper: decide which icon to use
@@ -49,6 +52,7 @@ def icon_href(keyed, last_report):
     else:
         # green – normal
         return "https://maps.google.com/mapfiles/kml/paddle/ylw-blank.png"
+
 
 # --------------------------------------------------------------
 # Build the KML document
@@ -84,7 +88,8 @@ def build_kml(nodes):
 
         placemark = ET.SubElement(doc, "Placemark")
         ET.SubElement(placemark, "name").text = node.get("name", "Unnamed")
-        ET.SubElement(placemark, "description").text = node.get("description", "")
+        ET.SubElement(placemark,
+                      "description").text = node.get("description", "")
         ET.SubElement(placemark, "styleUrl").text = "#repeaterStyle"
 
         # custom icon per status
@@ -92,20 +97,22 @@ def build_kml(nodes):
         icon_style = ET.SubElement(style_map, "IconStyle")
         ET.SubElement(icon_style, "scale").text = "1.2"
         icon = ET.SubElement(icon_style, "Icon")
-        ET.SubElement(icon, "href").text = icon_href(
-            node.get("keyed", "0"),
-            node.get("time", 0)
-        )
+        ET.SubElement(icon, "href").text = icon_href(node.get("keyed", "0"),
+                                                     node.get("time", 0))
 
         # extended data for the balloon template
         ext = ET.SubElement(placemark, "ExtendedData")
-        ET.SubElement(ext, "Data", name="lastReport").text = fmt_time(node.get("time", 0))
-        ET.SubElement(ext, "Data", name="keyed").text = "Yes" if node.get("keyed") == "1" else "No"
+        ET.SubElement(ext, "Data",
+                      name="lastReport").text = fmt_time(node.get("time", 0))
+        ET.SubElement(
+            ext, "Data",
+            name="keyed").text = "Yes" if node.get("keyed") == "1" else "No"
 
         point = ET.SubElement(placemark, "Point")
         ET.SubElement(point, "coordinates").text = f"{lon},{lat},0"
 
     return ET.ElementTree(kml)
+
 
 # --------------------------------------------------------------
 # Periodic update logic
@@ -115,7 +122,9 @@ def update_kml():
     try:
         print(f"[{datetime.utcnow().isoformat()}] Fetching node data …")
         nodes = fetch_nodes()
-        print(f"[{datetime.utcnow().isoformat()}] Got {len(nodes)} entries, building KML …")
+        print(
+            f"[{datetime.utcnow().isoformat()}] Got {len(nodes)} entries, building KML …"
+        )
         tree = build_kml(nodes)
         tree.write(OUTPUT_KML, encoding="utf-8", xml_declaration=True)
         print(f"[{datetime.utcnow().isoformat()}] KML written to {OUTPUT_KML}")
@@ -125,25 +134,27 @@ def update_kml():
     # schedule next run
     threading.Timer(UPDATE_INTERVAL, update_kml).start()
 
+
 # --------------------------------------------------------------
 # Flask routes
 # --------------------------------------------------------------
 @app.route("/")
 def index():
     """Simple landing page."""
-    return (
-        "<h2>NGGMRS Repeater KML Service</h2>"
-        "<p>Download the latest KML file: "
-        '<a href="/kml">nggmrs_repeaters.kml</a></p>'
-    )
+    return ("<h2>NGGMRS Repeater KML Service</h2>"
+            "<p>Download the latest KML file: "
+            '<a href="/kml">nggmrs_repeaters.kml</a></p>')
+
 
 @app.route("/kml")
 def serve_kml():
     """Serve the most‑recent KML file."""
     try:
-        return send_file(OUTPUT_KML, mimetype="application/vnd.google-earth.kml+xml")
+        return send_file(OUTPUT_KML,
+                         mimetype="application/vnd.google-earth.kml+xml")
     except FileNotFoundError:
         abort(404, description="KML file not yet generated.")
+
 
 # --------------------------------------------------------------
 # Entry point – start background updater then Flask
