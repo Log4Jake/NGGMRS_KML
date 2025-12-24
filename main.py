@@ -13,7 +13,7 @@ from flask import Flask, send_file, abort
 # --------------------------------------------------------------
 API_URL = "https://stats.nggmrs.net/api/nodes"
 OUTPUT_KML = "nggmrs_repeaters.kml"
-UPDATE_INTERVAL = 1 * 60  # 5 minutes (seconds)
+UPDATE_INTERVAL = 1 * 60  # 1 minute(s) (seconds)
 
 app = Flask(__name__)  # Flask app for Replit
 
