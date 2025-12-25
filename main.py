@@ -13,7 +13,7 @@ from flask import Flask, send_file, abort
 # --------------------------------------------------------------
 API_URL = "https://stats.nggmrs.net/api/nodes"
 OUTPUT_KML = "nggmrs_repeaters.kml"
-UPDATE_INTERVAL = 1 * 60  # 1 minute(s) (seconds)
+UPDATE_INTERVAL = 5 * 60  # 5 minutes (seconds)
 
 app = Flask(__name__)  # Flask app for Replit
 
@@ -45,13 +45,13 @@ def icon_href(keyed, last_report):
 
     if keyed == "1":
         # yellow – transmitting
-        return "https://maps.google.com/mapfiles/kml/paddle/X.png"
+        return "https://maps.google.com/mapfiles/kml/paddle/ylw-blank.png"
     elif age > timedelta(minutes=5):
         # red – stale data
-        return "https://maps.google.com/mapfiles/kml/paddle/grn-blank.png"
+        return "https://maps.google.com/mapfiles/kml/paddle/X.png"
     else:
         # green – normal
-        return "https://maps.google.com/mapfiles/kml/paddle/ylw-blank.png"
+        return "https://maps.google.com/mapfiles/kml/paddle/grn-blank.png"
 
 
 # --------------------------------------------------------------
